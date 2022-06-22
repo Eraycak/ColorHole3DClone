@@ -11,9 +11,7 @@ public class KillControl : MonoBehaviour
     private void Start()
     {
         eatableCount = GameObject.FindGameObjectsWithTag("EatableObjects").Length;
-        Debug.LogError("eatableCount: " + eatableCount);
         eatableCount2 = GameObject.FindGameObjectsWithTag("EatableObjects2").Length;
-        Debug.LogError("eatableCount2: " + eatableCount2);
     }
 
     private void OnTriggerEnter(Collider other)

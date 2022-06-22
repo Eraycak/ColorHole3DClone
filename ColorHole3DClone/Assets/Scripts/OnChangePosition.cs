@@ -9,9 +9,7 @@ public class OnChangePosition : MonoBehaviour
     public PolygonCollider2D ground2DCollider;
     public MeshCollider GeneratedMeshCollider;
     public Collider GroundCollider;
-    public float initialScale = 0.5f;
     Mesh GeneratedMesh;
-    public bool gameIsActive;
 
     public void Move(BaseEventData baseEventData)
     {
@@ -21,29 +19,14 @@ public class OnChangePosition : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        gameIsActive = false;
-        GameObject[] allGameObjects = FindObjectsOfType(typeof(GameObject)) as GameObject[];
-        foreach (var gameObject in allGameObjects)
-        {
-            if (gameObject.layer == LayerMask.NameToLayer("EatableObstacles") || gameObject.layer == LayerMask.NameToLayer("NonEatableObstacles"))
-            {
-                Physics.IgnoreCollision(gameObject.GetComponent<Collider>(), GeneratedMeshCollider, true);
-            }
-        }
-    }
-
     private void OnTriggerEnter(Collider other)
     {
-        Physics.IgnoreCollision(other, GroundCollider, true);
-        Physics.IgnoreCollision(other, GeneratedMeshCollider, false);
+        other.isTrigger = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Physics.IgnoreCollision(other, GroundCollider, false);
-        Physics.IgnoreCollision(other, GeneratedMeshCollider, true);
+        other.isTrigger = false;
     }
 
     private void FixedUpdate()
@@ -52,7 +35,7 @@ public class OnChangePosition : MonoBehaviour
         {
             transform.hasChanged = false;
             hole2DCollider.transform.position = new Vector2(transform.position.x, transform.position.z);
-            hole2DCollider.transform.localScale = transform.localScale * initialScale;
+            hole2DCollider.transform.localScale = transform.localScale;
             Make2DHole();
             Make3DMeshCollider();
         }
