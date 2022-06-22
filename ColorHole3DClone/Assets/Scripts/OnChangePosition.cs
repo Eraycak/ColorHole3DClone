@@ -10,23 +10,40 @@ public class OnChangePosition : MonoBehaviour
     public MeshCollider GeneratedMeshCollider;
     public Collider GroundCollider;
     Mesh GeneratedMesh;
+    private bool AutoControlIsActive = false;
 
     public void Move(BaseEventData baseEventData)
     {
-        if (((PointerEventData)baseEventData).pointerCurrentRaycast.isValid)
+        if (((PointerEventData)baseEventData).pointerCurrentRaycast.isValid && !AutoControlIsActive)
         {
             transform.position = ((PointerEventData)baseEventData).pointerCurrentRaycast.worldPosition;
         }
     }
 
+    public void ActivateAutoControl()
+    {
+        AutoControlIsActive = true;
+    }
+
+    public void DeactivateAutoControl()
+    {
+        AutoControlIsActive = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        other.isTrigger = true;
+        if (!AutoControlIsActive)
+        {
+            other.isTrigger = true;
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        other.isTrigger = false;
+        if (!AutoControlIsActive)
+        {
+            other.isTrigger = false;
+        }
     }
 
     private void FixedUpdate()

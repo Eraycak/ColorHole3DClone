@@ -13,9 +13,9 @@ public class KillControl : MonoBehaviour
     private Vector3 firstAreaPosition = new Vector3(0f, 0f, 0f);
     private Vector3 secondAreaPosition = new Vector3(0f, 0f, 65f);
     private Vector3 cameraSecondAreaPosition;
-    private bool done = false;
-    private float time = 0;
-    private float timeToReach = 1000f;
+    private float time = 0f;
+    private float timeToReachInArea1 = 100f;
+    private float timeToReachInArea2 = 250f;
 
     private void Start()
     {
@@ -23,7 +23,7 @@ public class KillControl : MonoBehaviour
         eatableCount2 = GameObject.FindGameObjectsWithTag("EatableObjects2").Length;
         holeParent = GameObject.Find("HoleParent");
         mCamera = Camera.main;
-        cameraSecondAreaPosition = mCamera.transform.position + new Vector3(0, 0, 95);
+        cameraSecondAreaPosition = mCamera.transform.position + new Vector3(0f, 0f, 95f);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -63,29 +63,31 @@ public class KillControl : MonoBehaviour
 
     private void Update()
     {
-        time += Time.deltaTime / timeToReach;
-        Debug.LogError("change " + changeIsTrue + " moved " + movedFirstLocationIsTrue + " done " + done);
         if (changeIsTrue && holeParent.transform.position.z != firstAreaPosition.z)
         {
+            GameObject.Find("HoleParent").GetComponent<OnChangePosition>().ActivateAutoControl();
+            time += Time.deltaTime / timeToReachInArea1;
             holeParent.transform.position = Vector3.Lerp(holeParent.transform.position, firstAreaPosition, time);
         }
 
-        if (holeParent.transform.position == firstAreaPosition && !done)
+        if ((holeParent.transform.position == firstAreaPosition) && changeIsTrue)
         {
             movedFirstLocationIsTrue = true;
             changeIsTrue = false;
+            time = 0f;
         }
 
         if (movedFirstLocationIsTrue && holeParent.transform.position.z != secondAreaPosition.z)
         {
+            time += Time.deltaTime / timeToReachInArea2;
             holeParent.transform.position = Vector3.Lerp(holeParent.transform.position, secondAreaPosition, time);
             mCamera.transform.position = Vector3.Lerp(mCamera.transform.position, cameraSecondAreaPosition, time);
         }
 
-        if (holeParent.transform.position == secondAreaPosition)
+        if ((holeParent.transform.position.z > (secondAreaPosition.z - 0.002f)) && movedFirstLocationIsTrue)
         {
             movedFirstLocationIsTrue = false;
-            done = true;
+            GameObject.Find("HoleParent").GetComponent<OnChangePosition>().DeactivateAutoControl();
         }
     }
 }
