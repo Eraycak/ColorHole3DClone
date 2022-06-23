@@ -63,28 +63,28 @@ public class KillControl : MonoBehaviour
 
     private void Update()
     {
-        if (changeIsTrue && holeParent.transform.position.z != firstAreaPosition.z)
+        if (changeIsTrue && holeParent.transform.position.z != firstAreaPosition.z)//if hole's position is not first area position, move hole to the first area position in a specified time
         {
             GameObject.Find("HoleParent").GetComponent<OnChangePosition>().ActivateAutoControl();
             time += Time.deltaTime / timeToReachInArea1;
             holeParent.transform.position = Vector3.Lerp(holeParent.transform.position, firstAreaPosition, time);
         }
 
-        if ((holeParent.transform.position == firstAreaPosition) && changeIsTrue)
+        if ((holeParent.transform.position == firstAreaPosition) && changeIsTrue)//if hole reaches to the first area position, changes variables to start movement for the second area
         {
             movedFirstLocationIsTrue = true;
             changeIsTrue = false;
-            time = 0f;
+            time = 0f;//reset time to calculate correctly
         }
 
-        if (movedFirstLocationIsTrue && holeParent.transform.position.z != secondAreaPosition.z)
+        if (movedFirstLocationIsTrue && holeParent.transform.position.z != secondAreaPosition.z)//if hole's position is not second area position, move hole to the second area position in a specified time
         {
             time += Time.deltaTime / timeToReachInArea2;
             holeParent.transform.position = Vector3.Lerp(holeParent.transform.position, secondAreaPosition, time);
             mCamera.transform.position = Vector3.Lerp(mCamera.transform.position, cameraSecondAreaPosition, time);
         }
 
-        if ((holeParent.transform.position.z > (secondAreaPosition.z - 0.002f)) && movedFirstLocationIsTrue)
+        if ((holeParent.transform.position.z > (secondAreaPosition.z - 0.002f)) && movedFirstLocationIsTrue)//if hole reaches to the second area position, changes variables to stop automatic movement 
         {
             movedFirstLocationIsTrue = false;
             GameObject.Find("HoleParent").GetComponent<OnChangePosition>().DeactivateAutoControl();

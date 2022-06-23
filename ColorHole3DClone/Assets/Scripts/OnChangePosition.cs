@@ -14,7 +14,7 @@ public class OnChangePosition : MonoBehaviour
 
     public void Move(BaseEventData baseEventData)
     {
-        if (((PointerEventData)baseEventData).pointerCurrentRaycast.isValid && !AutoControlIsActive)
+        if (((PointerEventData)baseEventData).pointerCurrentRaycast.isValid && !AutoControlIsActive)//if player touches to screen, moves hole to that position
         {
             transform.position = ((PointerEventData)baseEventData).pointerCurrentRaycast.worldPosition;
         }
@@ -30,7 +30,7 @@ public class OnChangePosition : MonoBehaviour
         AutoControlIsActive = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)//if hole triggers objects, it turns on their triggers to make them fall
     {
         if (!AutoControlIsActive)
         {
@@ -38,7 +38,7 @@ public class OnChangePosition : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)//if hole not triggers objects, it turns off their triggers to make them fall
     {
         if (!AutoControlIsActive)
         {

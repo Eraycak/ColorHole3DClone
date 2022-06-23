@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     private GameObject gamePanel;
     private GameObject settingsPanel;
     public bool vibrationIsActive;
+    private int levelNumber;
 
     void Start()
     {
@@ -22,7 +23,7 @@ public class GameManager : MonoBehaviour
         endLevelPanel = GameObject.Find("EndLevelPanel");
         gamePanel = GameObject.Find("GamePanel");
         settingsPanel = GameObject.Find("SettingsPanel");
-        LoadData();
+        LoadData();//loads saved data from playerPrefs
         startPanel.gameObject.SetActive(true);
         gameOverPanel.gameObject.SetActive(false);
         endLevelPanel.gameObject.SetActive(false);
@@ -30,20 +31,20 @@ public class GameManager : MonoBehaviour
         settingsPanel.gameObject.SetActive(false);
     }
 
-    public void PlayGame()
+    public void PlayGame()//if player touch play button, active panels change
     {
         startPanel.gameObject.SetActive(false);
         gamePanel.gameObject.SetActive(true);
     }
 
-    public void ReplayLevel()
+    public void ReplayLevel()//if player eats nonEatableObjects, level restarts and active panels change
     {
         gamePanel.SetActive(false);
         gameOverPanel.SetActive(true);
         LoadSameScene();
     }
 
-    public void NextLevel()
+    public void NextLevel()//if player finishes level, level and active panels changes
     {
         gamePanel.SetActive(false);
         endLevelPanel.SetActive(true);
@@ -52,26 +53,22 @@ public class GameManager : MonoBehaviour
 
     IEnumerator LoadNextScene()
     {
-        yield return new WaitForSeconds(2f);
-        int level = SceneManager.GetActiveScene().buildIndex + 1;
-        if (level == 2)
+        yield return new WaitForSeconds(2f);//waits a little bit to show endLevelPanel to player
+        levelNumber = SceneManager.GetActiveScene().buildIndex + 1;//loads next level
+        if (levelNumber == 2)//resets level no for creating infinite loop of levels
         {
-            level = 0;
+            levelNumber = 0;
         }
-        SaveData();
-        SceneManager.LoadScene(level);
+        SaveData();//saves data to playerPrefs
+        SceneManager.LoadScene(levelNumber);
     }
 
     IEnumerator LoadSameScene()
     {
-        yield return new WaitForSeconds(2f);
-        int level = SceneManager.GetActiveScene().buildIndex + 1;
-        if (level == 2)
-        {
-            level = 0;
-        }
+        yield return new WaitForSeconds(2f);//waits a little bit to show gameOverPanel to player
+        levelNumber = SceneManager.GetActiveScene().buildIndex;
         SaveData();
-        SceneManager.LoadScene(level);
+        SceneManager.LoadScene(levelNumber);
     }
 
     public void QuitGame()
@@ -80,14 +77,14 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void SettingsButton()
+    public void SettingsButton()//if player touches settingButton, settingPanels is activated
     {
         settingsPanel.gameObject.SetActive(true);
     }
 
     public void VibrationButton()
     {
-        if (settingsPanel.gameObject.GetComponentInChildren<Scrollbar>().value>0.5f)
+        if (settingsPanel.gameObject.GetComponentInChildren<Scrollbar>().value>0.5f)//changes vibration according to button
         {
             vibrationIsActive = true;
         }
@@ -98,13 +95,13 @@ public class GameManager : MonoBehaviour
         SaveData();
     }
 
-    public void CloseButton()
+    public void CloseButton()//closes settingsPanel
     {
         SaveData();
         settingsPanel.gameObject.SetActive(false);
     }
 
-    private void SaveData()
+    private void SaveData()//saves variables
     {
         if (vibrationIsActive)
         {
@@ -114,9 +111,10 @@ public class GameManager : MonoBehaviour
         {
             PlayerPrefs.SetInt("VibrationIsActive", 0);
         }
+        PlayerPrefs.SetInt("LevelNumber", levelNumber);
     }
 
-    private void LoadData()
+    private void LoadData()//loads variables
     {
         if (PlayerPrefs.GetInt("VibrationIsActive") == 1)
         {
@@ -128,6 +126,7 @@ public class GameManager : MonoBehaviour
             vibrationIsActive = false;
             settingsPanel.gameObject.GetComponentInChildren<Scrollbar>().value = 0;
         }
+        levelNumber = PlayerPrefs.GetInt("LevelNumber");
     }
 
 }
