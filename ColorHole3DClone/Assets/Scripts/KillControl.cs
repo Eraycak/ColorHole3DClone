@@ -6,16 +6,18 @@ public class KillControl : MonoBehaviour
 {
     private GameObject holeParent;
     private Camera mCamera;
-    private int eatableCount = 0;
-    private int eatableCount2 = 0;
-    private bool changeIsTrue = false;
-    private bool movedFirstLocationIsTrue = false;
-    private Vector3 firstAreaPosition = new Vector3(0f, 0f, 0f);
-    private Vector3 secondAreaPosition = new Vector3(0f, 0f, 65f);
-    private Vector3 cameraSecondAreaPosition;
+    private int eatableCount = 0;//eatableObjects count in the first area
+    private int eatableCount2 = 0;//eatableObjects count in the second area
+    private bool changeIsTrue = false;//bool for activating hole's position change for first area
+    private bool movedFirstLocationIsTrue = false;//bool for activating hole's position change for second area
+    private Vector3 firstAreaPosition = new Vector3(0f, 0f, 0f);//hole's first area position to move after eating eatableObjects in the first area
+    private Vector3 secondAreaPosition = new Vector3(0f, 0f, 65f);//hole's second area position to move after moving first position area
+    private Vector3 cameraSecondAreaPosition;//camera's second area position
+    private float cameraFirstAreaPositionZ = -48.4f;
+    private float cameraSecondAreaPositionZ = 46.6f;
     private float time = 0f;
-    private float timeToReachInArea1 = 100f;
-    private float timeToReachInArea2 = 250f;
+    private float timeToReachInArea1 = 100f;//time to move first position
+    private float timeToReachInArea2 = 250f;//time to move second position
 
     private void Start()
     {
@@ -23,27 +25,26 @@ public class KillControl : MonoBehaviour
         eatableCount2 = GameObject.FindGameObjectsWithTag("EatableObjects2").Length;
         holeParent = GameObject.Find("HoleParent");
         mCamera = Camera.main;
-        cameraSecondAreaPosition = mCamera.transform.position + new Vector3(0f, 0f, 95f);
+        cameraSecondAreaPosition = mCamera.transform.position + new Vector3(0f, 0f, 95f);//camera's second area position
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag== "NonEatableObstacles")
+        if (other.gameObject.tag == "NonEatableObstacles")
         {
-            Debug.LogError("gameover");
-            //GameObject.Find("GameManager").GetComponent<GameManager>().ReplayLevel();
+            GameObject.Find("GameManager").GetComponent<GameManager>().ReplayLevel();//if player eats nonEatableObject, level restarts
         }
         else
         {
-            if (mCamera.transform.position.z == -48.4f)
+            if (mCamera.transform.position.z == cameraFirstAreaPositionZ)//if camera is in the first area, eatableObjects are from first area
             {
                 eatableCount--;
-                if (eatableCount == 0)
+                if (eatableCount == 0)//if player eats all eatableObjects in the first area, location will change
                 {
                     changeIsTrue = true;
                 }
             }
-            else if (mCamera.transform.position.z == 46.6f)
+            else if (mCamera.transform.position.z == cameraSecondAreaPositionZ)//if camera is in the second area, eatableObjects are from second area
             {
                 eatableCount2--;
                 if (eatableCount2 == 0)
@@ -53,11 +54,10 @@ public class KillControl : MonoBehaviour
                 }
             }
         }
-        Destroy(other.gameObject);
-        if (GameObject.Find("GameManager").GetComponent<GameManager>().vibrationIsActive)
+        Destroy(other.gameObject);//destroy eaten objects 
+        if (GameObject.Find("GameManager").GetComponent<GameManager>().vibrationIsActive)//if vibrate is activated in the settings and player eats objects, phone vibrates
         {
             Handheld.Vibrate();
-            Debug.LogError("vibrated");
         }
     }
 
