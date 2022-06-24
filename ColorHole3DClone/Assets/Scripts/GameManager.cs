@@ -13,8 +13,18 @@ public class GameManager : MonoBehaviour
     private GameObject startPanel;
     private GameObject gamePanel;
     private GameObject settingsPanel;
+    private Slider levelSlider;
     public bool vibrationIsActive;
     private int levelNumber;
+    private int goldNumber = 0;// goldNumber which player has //it is assigned 0 for first play time
+    private int levelNumberCurrent = 0;//current level number which player is //it is assigned 0 for first play time
+    private float eatableCount = 0;//eatableObjects count in the first area
+    private float eatableCount2 = 0;//eatableObjects count in the second area
+    private float keepEatableCount = 0;//eatableObjects count in the first area when game is started
+    private float keepEatableCount2 = 0;//eatableObjects count in the second area when game is started
+    private TextMeshProUGUI goldNumberText;
+    private TextMeshProUGUI levelNumberCurrentText;
+    private TextMeshProUGUI levelNumberNextText;
 
     void Start()
     {
@@ -23,18 +33,52 @@ public class GameManager : MonoBehaviour
         endLevelPanel = GameObject.Find("EndLevelPanel");
         gamePanel = GameObject.Find("GamePanel");
         settingsPanel = GameObject.Find("SettingsPanel");
+        goldNumberText = GameObject.Find("GoldNumberText").GetComponent<TextMeshProUGUI>();
+        levelNumberCurrentText = GameObject.Find("LevelNumberCurrentText").GetComponent<TextMeshProUGUI>();
+        levelNumberNextText = GameObject.Find("LevelNumberNextText").GetComponent<TextMeshProUGUI>();
+        eatableCount = GameObject.FindGameObjectsWithTag("EatableObjects").Length;
+        eatableCount2 = GameObject.FindGameObjectsWithTag("EatableObjects2").Length;
+        keepEatableCount = eatableCount;
+        keepEatableCount2 = eatableCount2;
         LoadData();//loads saved data from playerPrefs
         startPanel.gameObject.SetActive(true);
         gameOverPanel.gameObject.SetActive(false);
         endLevelPanel.gameObject.SetActive(false);
         gamePanel.gameObject.SetActive(false);
         settingsPanel.gameObject.SetActive(false);
+        goldNumberText.text = "" + goldNumber;
+        levelNumberCurrentText.text = "" + levelNumberCurrent;
+        levelNumberNextText.text = "" + (levelNumberCurrent + 1);
+        levelSlider = (Slider)GameObject.FindObjectsOfType(typeof(Slider))[0];
+        levelSlider.value = 0;
+    }
+
+    private void Update()
+    {
+        if (gamePanel.activeInHierarchy)
+        {
+            if (eatableCount != 0)
+            {
+                levelSlider.value = 0.5f - ((eatableCount / keepEatableCount) / 2f);
+                eatableCount = GameObject.FindGameObjectsWithTag("EatableObjects").Length;
+            }
+            else if (eatableCount2 != 0 && eatableCount == 0)
+            {
+                levelSlider.value = 1f - ((eatableCount2 / keepEatableCount2) / 2f);
+                eatableCount2 = GameObject.FindGameObjectsWithTag("EatableObjects2").Length;
+            }
+        }
     }
 
     public void PlayGame()//if player touch play button, active panels change
     {
         startPanel.gameObject.SetActive(false);
         gamePanel.gameObject.SetActive(true);
+        levelNumberCurrentText = GameObject.Find("LevelNumberCurrentText").GetComponent<TextMeshProUGUI>();
+        levelNumberNextText = GameObject.Find("LevelNumberNextText").GetComponent<TextMeshProUGUI>();
+        levelNumberCurrentText.text = "" + levelNumberCurrent;
+        levelNumberNextText.text = "" + (levelNumberCurrent + 1);
+        levelSlider = (Slider)GameObject.FindObjectsOfType(typeof(Slider))[0];
     }
 
     public void ReplayLevel()//if player eats nonEatableObjects, level restarts and active panels change
@@ -48,6 +92,8 @@ public class GameManager : MonoBehaviour
     {
         gamePanel.SetActive(false);
         endLevelPanel.SetActive(true);
+        goldNumber += 100;
+        levelNumberCurrent++;
         LoadNextScene();
     }
 
@@ -112,6 +158,8 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("VibrationIsActive", 0);
         }
         PlayerPrefs.SetInt("LevelNumber", levelNumber);
+        PlayerPrefs.SetInt("GoldNumber", goldNumber);
+        PlayerPrefs.SetInt("LevelNumberCurrent", levelNumberCurrent);
     }
 
     private void LoadData()//loads variables
@@ -127,6 +175,8 @@ public class GameManager : MonoBehaviour
             settingsPanel.gameObject.GetComponentInChildren<Scrollbar>().value = 0;
         }
         levelNumber = PlayerPrefs.GetInt("LevelNumber");
+        goldNumber = PlayerPrefs.GetInt("GoldNumber");
+        levelNumberCurrent = PlayerPrefs.GetInt("LevelNumberCurrent");
     }
 
 }

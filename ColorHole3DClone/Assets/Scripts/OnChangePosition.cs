@@ -51,13 +51,12 @@ public class OnChangePosition : MonoBehaviour
         if (transform.hasChanged == true)
         {
             transform.hasChanged = false;
-            hole2DCollider.transform.position = new Vector2(transform.position.x, transform.position.z);
-            hole2DCollider.transform.localScale = transform.localScale;
+            hole2DCollider.transform.position = new Vector2(transform.position.x, transform.position.z);//moves hole to the position which player wants
             Make2DHole();
             Make3DMeshCollider();
         }
     }
-
+    //add comment lines here
     private void Make2DHole()
     {
         Vector2[] PointPositions = hole2DCollider.GetPath(0);
