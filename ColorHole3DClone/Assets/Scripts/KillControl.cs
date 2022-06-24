@@ -5,6 +5,7 @@ using UnityEngine;
 public class KillControl : MonoBehaviour
 {
     private GameObject holeParent;
+    private GameObject door;
     private Camera mCamera;
     private int eatableCount = 0;//eatableObjects count in the first area
     private int eatableCount2 = 0;//eatableObjects count in the second area
@@ -13,6 +14,7 @@ public class KillControl : MonoBehaviour
     private Vector3 firstAreaPosition = new Vector3(0f, 0f, 0f);//hole's first area position to move after eating eatableObjects in the first area
     private Vector3 secondAreaPosition = new Vector3(0f, 0f, 65f);//hole's second area position to move after moving first position area
     private Vector3 cameraSecondAreaPosition;//camera's second area position
+    private Vector3 downedDoorPosition;//door's new position after player eats all eatableObjects
     private float cameraFirstAreaPositionZ = -48.4f;
     private float cameraSecondAreaPositionZ = 46.6f;
     private float time = 0f;
@@ -24,8 +26,10 @@ public class KillControl : MonoBehaviour
         eatableCount = GameObject.FindGameObjectsWithTag("EatableObjects").Length;
         eatableCount2 = GameObject.FindGameObjectsWithTag("EatableObjects2").Length;
         holeParent = GameObject.Find("HoleParent");
+        door = GameObject.Find("Door");
         mCamera = Camera.main;
         cameraSecondAreaPosition = mCamera.transform.position + new Vector3(0f, 0f, 95f);//camera's second area position
+        downedDoorPosition = door.transform.position + new Vector3(0f, -12.5f, 0f);//camera's second area position
     }
 
     private void OnTriggerEnter(Collider other)
@@ -49,8 +53,7 @@ public class KillControl : MonoBehaviour
                 eatableCount2--;
                 if (eatableCount2 == 0)
                 {
-                    Debug.LogError("nextlevel");
-                    //GameObject.Find("GameManager").GetComponent<GameManager>().NextLevel();
+                    GameObject.Find("GameManager").GetComponent<GameManager>().NextLevel();
                 }
             }
         }
@@ -68,6 +71,7 @@ public class KillControl : MonoBehaviour
             GameObject.Find("HoleParent").GetComponent<OnChangePosition>().ActivateAutoControl();
             time += Time.deltaTime / timeToReachInArea1;
             holeParent.transform.position = Vector3.Lerp(holeParent.transform.position, firstAreaPosition, time);
+            door.transform.position = Vector3.Lerp(door.transform.position, downedDoorPosition, time);
         }
 
         if ((holeParent.transform.position == firstAreaPosition) && changeIsTrue)//if hole reaches to the first area position, changes variables to start movement for the second area

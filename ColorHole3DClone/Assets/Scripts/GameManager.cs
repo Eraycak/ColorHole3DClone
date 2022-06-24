@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
     {
         gamePanel.SetActive(false);
         gameOverPanel.SetActive(true);
-        LoadSameScene();
+        StartCoroutine(LoadSameScene());
     }
 
     public void NextLevel()//if player finishes level, level and active panels changes
@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
         endLevelPanel.SetActive(true);
         goldNumber += 100;
         levelNumberCurrent++;
-        LoadNextScene();
+        StartCoroutine(LoadNextScene());
     }
 
     IEnumerator LoadNextScene()
