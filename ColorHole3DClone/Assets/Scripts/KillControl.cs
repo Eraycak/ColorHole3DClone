@@ -16,7 +16,7 @@ public class KillControl : MonoBehaviour
     private Vector3 cameraSecondAreaPosition;//camera's second area position
     private Vector3 downedDoorPosition;//door's new position after player eats all eatableObjects
     private float cameraFirstAreaPositionZ = -48.4f;
-    private float cameraSecondAreaPositionZ = 46.6f;
+    private float cameraSecondAreaPositionZ = 44.6f;
     private float time = 0f;
     private float vibrationTimer = 0f;
     private float timeToReachInArea1 = 100f;//time to move first position
@@ -49,7 +49,7 @@ public class KillControl : MonoBehaviour
                     changeIsTrue = true;
                 }
             }
-            else if (mCamera.transform.position.z == cameraSecondAreaPositionZ)//if camera is in the second area, eatableObjects are from second area
+            else if (mCamera.transform.position.z >= cameraSecondAreaPositionZ)//if camera is in the second area, eatableObjects are from second area
             {
                 eatableCount2--;
                 if (eatableCount2 == 0)
