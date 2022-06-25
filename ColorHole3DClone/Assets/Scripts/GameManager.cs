@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);//waits a little bit to show endLevelPanel to player
         levelNumber = SceneManager.GetActiveScene().buildIndex + 1;//loads next level
-        if (levelNumber == 2)//resets level no for creating infinite loop of levels
+        if (levelNumber == (SceneManager.sceneCountInBuildSettings + 1))//resets level no for creating infinite loop of levels
         {
             levelNumber = 0;
         }

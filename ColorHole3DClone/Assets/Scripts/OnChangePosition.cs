@@ -30,11 +30,13 @@ public class OnChangePosition : MonoBehaviour
         AutoControlIsActive = false;
     }
 
-    private void OnTriggerEnter(Collider other)//if hole triggers objects, it turns on their triggers to make them fall
+    private void OnTriggerEnter(Collider other)//if hole triggers objects, it turns on their triggers to make them fall and changes it's use gravity to prevent any bug related to the gravity
     {
         if (!AutoControlIsActive)
         {
             other.isTrigger = true;
+            other.gameObject.GetComponent<Rigidbody>().useGravity = false;
+            other.gameObject.GetComponent<Rigidbody>().useGravity = true;
         }
     }
 
@@ -43,6 +45,8 @@ public class OnChangePosition : MonoBehaviour
         if (!AutoControlIsActive)
         {
             other.isTrigger = false;
+            other.gameObject.GetComponent<Rigidbody>().useGravity = false;
+            other.gameObject.GetComponent<Rigidbody>().useGravity = true;
         }
     }
 
@@ -56,25 +60,25 @@ public class OnChangePosition : MonoBehaviour
             Make3DMeshCollider();
         }
     }
-    //add comment lines here
-    private void Make2DHole()
+
+    private void Make2DHole()//moves ground2DCollider as much as hole2DCollider at the same time
     {
         Vector2[] PointPositions = hole2DCollider.GetPath(0);
-        for (int i = 0; i < PointPositions.Length; i++)
+        for (int i = 0; i < PointPositions.Length; i++)//changes pointPositions to the holeCollider related points
         {
             PointPositions[i] = hole2DCollider.transform.TransformPoint(PointPositions[i]);
         }
         ground2DCollider.pathCount = 2;
-        ground2DCollider.SetPath(1, PointPositions);
+        ground2DCollider.SetPath(1, PointPositions);//moves ground2DCollider to new pointPositions
     }
 
     private void Make3DMeshCollider()
     {
-        if (GeneratedMesh != null)
+        if (GeneratedMesh != null)//Destroys generatedMesh apply changes
         {
             Destroy(GeneratedMesh);
         }
-        GeneratedMesh = ground2DCollider.CreateMesh(true, true);
-        GeneratedMeshCollider.sharedMesh = GeneratedMesh;
+        GeneratedMesh = ground2DCollider.CreateMesh(true, true);//creates mesh which is related to the ground2DCollider and has it's positions and rotations
+        GeneratedMeshCollider.sharedMesh = GeneratedMesh;//applies changes to the generatedMeshCollider
     }
 }
