@@ -18,7 +18,6 @@ public class KillControl : MonoBehaviour
     private float cameraFirstAreaPositionZ = -48.4f;
     private float cameraSecondAreaPositionZ = 44.6f;
     private float time = 0f;
-    private float vibrationTimer = 0f;
     private float timeToReachInArea1 = 100f;//time to move first position
     private float timeToReachInArea2 = 250f;//time to move second position
 
@@ -59,10 +58,9 @@ public class KillControl : MonoBehaviour
             }
         }
         Destroy(other.gameObject);//destroy eaten objects 
-        if (GameObject.Find("GameManager").GetComponent<GameManager>().vibrationIsActive && vibrationTimer == 0)//if vibrate is activated in the settings and player eats objects, phone vibrates
+        if (GameObject.Find("GameManager").GetComponent<GameManager>().vibrationIsActive)//if vibrate is activated in the settings and player eats objects, phone vibrates
         {
             Handheld.Vibrate();
-            vibrationTimer = 2f;
         }
     }
 
@@ -94,11 +92,6 @@ public class KillControl : MonoBehaviour
         {
             movedFirstLocationIsTrue = false;
             GameObject.Find("HoleParent").GetComponent<OnChangePosition>().DeactivateAutoControl();
-        }
-
-        if (vibrationTimer >= 0)
-        {
-            vibrationTimer -= Time.deltaTime;
         }
     }
 }
